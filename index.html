@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoyi Station - Partner Tracking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#E0E9E7] text-[#000000]">
+
+    <header class="bg-[#00AA93] text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
+            <div class="bg-white p-1 rounded-lg flex items-center justify-center min-w-[48px] min-h-[48px]">
+                <img src="logo.jpg" alt="Yoyi Station Logo" class="h-12 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="hidden bg-[#00AA93] text-white font-bold px-2 py-1 rounded text-sm items-center justify-center">Yoyi</div>
+            </div>
+            <div class="flex-grow">
+                <h1 class="text-2xl font-bold">Yoyi Station</h1>
+                <p class="text-[#E0E9E7] text-sm">ระบบรายงานติดตามผลการลงพื้นที่</p>
+            </div>
+            <div id="stats-summary" class="hidden md:flex gap-4 text-sm">
+                <div class="bg-[#000000] px-3 py-1.5 rounded-lg text-white">ทั้งหมด: <span id="stat-total" class="font-bold">0</span></div>
+                <div class="bg-[#FFC41D] px-3 py-1.5 rounded-lg text-black font-semibold">สนใจร่วมงาน: <span id="stat-interested" class="font-bold">0</span></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-[#E0E9E7] h-fit">
+            <h2 class="text-lg font-semibold text-[#00AA93] mb-4">บันทึกข้อมูลการลงพื้นที่</h2>
+            <form id="partnerForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">วันที่ลงพื้นที่</label>
+                    <input type="date" id="visitDate" required class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ชื่อผู้ดำเนินการ</label>
+                    <input type="text" id="operatorName" required placeholder="เช่น สมชาย ใจดี" class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ชื่อพาร์ทเนอร์</label>
+                    <input type="text" id="partnerName" required class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">จังหวัด</label>
+                    <input type="text" id="province" required class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ชื่อสถานที่ติดตั้ง</label>
+                    <input type="text" id="installationSite" required class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">รูปแบบของสถานที่</label>
+                    <input type="text" id="siteType" required placeholder="เช่น อาคารพาณิชย์, ร้านค้า, คอนโด" class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">สาขาคลังนำจ่าย</label>
+                    <input type="text" id="deliveryHub" required class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">เขต/แฟรนไชส์</label>
+                    <input type="text" id="franchiseArea" required class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">อุปสรรคในการนำจ่ายปัจจุบัน</label>
+                    <textarea id="deliveryObstacle" rows="2" class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">จำนวนพัสดุ/วัน</label>
+                    <input type="number" id="parcelCount" required class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">สถานะ</label>
+                    <select id="status" class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm">
+                        <option value="สนใจร่วมงาน">สนใจร่วมงาน</option>
+                        <option value="กำลังพิจารณา">กำลังพิจารณา</option>
+                        <option value="ไม่สนใจ">ไม่สนใจ</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">แนบรูปถ่ายผลการทำงาน</label>
+                    <input type="file" id="workImage" accept="image/*" capture="environment" class="w-full px-3 py-2 border border-[#E0E9E7] rounded-xl focus:ring-2 focus:ring-[#00AA93] focus:outline-none text-sm bg-gray-50">
+                </div>
+                <button type="submit" class="w-full bg-[#00AA93] hover:bg-[#008f7d] text-white font-medium py-2.5 rounded-xl transition shadow-md">บันทึกข้อมูล</button>
+            </form>
+        </section>
+
+        <section class="lg:col-span-2 space-y-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#E0E9E7]">
+                <h2 class="text-lg font-semibold text-[#000000] mb-4">ประวัติการลงพื้นที่</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-xs text-[#00AA93] uppercase">
+                                <th class="p-3">วันที่/ผู้ดำเนินการ</th>
+                                <th class="p-3">พาร์ทเนอร์/สถานที่</th>
+                                <th class="p-3">จังหวัด/คลัง</th>
+                                <th class="p-3">พัสดุ/วัน</th>
+                                <th class="p-3">รูปภาพ</th>
+                                <th class="p-3">สถานะ</th>
+                                <th class="p-3">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="text-sm divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let reports = JSON.parse(localStorage.getItem('yoyi_reports')) || [];
+        document.getElementById('visitDate').valueAsDate = new Date();
+        
+        document.getElementById('partnerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const imageInput = document.getElementById('workImage');
+            
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    addNewReport(event.target.result);
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                addNewReport('');
+            }
+        });
+
+        function addNewReport(imageData) {
+            const newReport = {
+                id: Date.now(),
+                date: document.getElementById('visitDate').value,
+                operator: document.getElementById('operatorName').value,
+                partner: document.getElementById('partnerName').value,
+                province: document.getElementById('province').value,
+                installationSite: document.getElementById('installationSite').value,
+                siteType: document.getElementById('siteType').value,
+                deliveryHub: document.getElementById('deliveryHub').value,
+                franchiseArea: document.getElementById('franchiseArea').value,
+                deliveryObstacle: document.getElementById('deliveryObstacle').value,
+                parcelCount: document.getElementById('parcelCount').value,
+                status: document.getElementById('status').value,
+                image: imageData
+            };
+            reports.unshift(newReport);
+            saveAndRender();
+            document.getElementById('partnerForm').reset();
+            document.getElementById('visitDate').valueAsDate = new Date();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('yoyi_reports', JSON.stringify(reports));
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            reports.forEach(item => {
+                const imageTag = item.image ? `<img src="${item.image}" class="w-12 h-12 object-cover rounded-lg cursor-pointer hover:opacity-80 shadow-sm" onclick="window.open('${item.image}')">` : `<span class="text-gray-400 text-xs">ไม่มีรูป</span>`;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 align-top">
+                        <td class="p-3">${item.date}<br><span class="text-xs text-gray-500 font-medium">${item.operator}</span></td>
+                        <td class="p-3 font-medium">${item.partner}<br><span class="text-xs text-gray-600">สถานที่: ${item.installationSite} (${item.siteType})</span></td>
+                        <td class="p-3 text-xs">จ. ${item.province}<br><span class="text-gray-500">คลัง: ${item.deliveryHub}</span></td>
+                        <td class="p-3">${item.parcelCount} ชิ้น<br><span class="text-xs text-red-500">อุปสรรค: ${item.deliveryObstacle || '-'}</span></td>
+                        <td class="p-3">${imageTag}</td>
+                        <td class="p-3"><span class="px-2 py-1 rounded bg-[#FFC41D] text-black text-xs font-bold">${item.status}</span></td>
+                        <td class="p-3"><button onclick="deleteItem(${item.id})" class="text-red-500 hover:underline">ลบ</button></td>
+                    </tr>`;
+            });
+            document.getElementById('stat-total').innerText = reports.length;
+            document.getElementById('stat-interested').innerText = reports.filter(r => r.status === 'สนใจร่วมงาน').length;
+        }
+
+        (function checkInitialLogo() {
+            const img = new Image();
+            img.src = 'logo.jpg';
+        })();
+
+        function deleteItem(id) {
+            if(confirm('ต้องการลบรายงานนี้ใช่หรือไม่?')) {
+                reports = reports.filter(i => i.id !== id);
+                saveAndRender();
+            }
+        }
+        saveAndRender();
+    </script>
+</body>
+</html>
